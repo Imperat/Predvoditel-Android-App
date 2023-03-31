@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Футбольный Предводитель</string>
+    <string name="prompt_username">Имя пользователя</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Залогиниться</string>
+    <string name="action_sign_up">Перейти к регистрации</string>
+    <string name="welcome_to_predvoditel">Добро пожаловать в Футбольный Предводитель!</string>
+    <string name="crossTournamentStats">Межтурнирная статистика</string>
+    <string name="settings">Настройки</string>
+    <string name="allTournaments">Посмотреть все турниры</string>
+    <string name="players">Игроки</string>
+    <string name="aboutPredvoditel">О программе</string>
+</resources>

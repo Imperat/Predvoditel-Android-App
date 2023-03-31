@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainMenu">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/startGameButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/primary_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/startTheGame" />
+
+        <Button
+            android:id="@+id/allTournamentsButton"
+            style="@style/secondary_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/allTournaments"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/startGameButton" />
+
+        <Button
+            android:id="@+id/playersButton"
+            style="@style/secondary_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/players"
+            tools:layout_editor_absoluteX="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/allTournamentsButton"
+            tools:layout_editor_absoluteY="256dp" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            style="@style/secondary_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playersButton"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="338dp" />
+
+        <Button
+            android:id="@+id/crossTournamentStatsButton"
+            android:layout_width="match_parent"
+            style="@style/secondary_button"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settingsButton"
+            android:text="@string/crossTournamentStats"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/aboutButton"
+            android:layout_width="match_parent"
+            style="@style/secondary_button"
+            android:layout_height="wrap_content"
+            android:text="@string/aboutPredvoditel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/crossTournamentStatsButton"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/footballMessengerButton"
+            android:layout_width="match_parent"
+            style="@style/secondary_button"
+            android:layout_height="wrap_content"
+            android:text="@string/footballMessenger"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/aboutButton"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/logOutButton"
+            style="@style/secondary_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/footballMessengerButton"
+            android:text="@string/logOut"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="121dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

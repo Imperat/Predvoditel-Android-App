@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Predvoditel</string>
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="welcome_to_predvoditel">Welcome to Football Predvoditel</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="language_title">Language</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="crossTournamentStats">Межтурнирная статистика</string>
+    <string name="settings">Настройки</string>
+    <string name="allTournaments">Посмотреть все турниры</string>
+    <string name="startTheGame">Начать игру</string>
+    <string name="players">Игроки</string>
+    <string name="aboutPredvoditel">О программе</string>
+    <string name="logOut">Разлогиниться</string>
+    <string name="footballMessenger">Футбольный мессенджер</string>
+</resources>
