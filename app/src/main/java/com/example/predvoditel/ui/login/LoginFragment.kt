@@ -85,6 +85,7 @@ class LoginFragment : Fragment() {
                 }
                 loginResult.success?.let {
                     updateUiWithUser(it)
+                    callbacks?.onUserLoggedIn();
                 }
             })
 
@@ -123,8 +124,6 @@ class LoginFragment : Fragment() {
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
-
-            callbacks?.onUserLoggedIn()
         }
     }
 
