@@ -12,6 +12,12 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
+data class LoginFormState(
+    val usernameError: Int? = null,
+    val passwordError: Int? = null,
+    val isDataValid: Boolean = false
+)
+
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
@@ -35,6 +41,21 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     }
 
     fun loginDataChanged(username: String, password: String) {
-        _loginForm.value = LoginFormState(isDataValid = true)
+        var usernameError: Int? = null
+        var passwordError: Int? = null
+
+        if (username.length <= 1) {
+            usernameError = R.string.invalid_username;
+        }
+
+        if (password.length <= 1) {
+            passwordError = R.string.invalid_password;
+        }
+
+        _loginForm.value = LoginFormState(
+            isDataValid = usernameError != null || passwordError != null,
+            usernameError = usernameError,
+            passwordError = passwordError
+        )
     }
 }

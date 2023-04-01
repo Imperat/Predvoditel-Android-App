@@ -17,7 +17,12 @@ class LoginDataSource {
             val fakeUser: LoggedInUser;
             runBlocking {
                 val responseUser = webClient.login(username, password);
-                fakeUser = LoggedInUser(responseUser.user._id, responseUser.user.name);
+                fakeUser = LoggedInUser(
+                    responseUser.user._id,
+                    responseUser.user.name,
+                    responseUser.token,
+                    responseUser.refreshToken,
+                );
             }
             return Result.Success(fakeUser)
         } catch (e: Throwable) {

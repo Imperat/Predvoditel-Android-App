@@ -5,5 +5,7 @@ package com.example.predvoditel.data.model
  */
 data class LoggedInUser(
     val userId: String,
-    val displayName: String
+    val displayName: String,
+    val token: String,
+    val refreshToken: String,
 )
