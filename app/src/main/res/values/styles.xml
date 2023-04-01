@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="primary_button" parent="TextAppearance.AppCompat">
+    <style name="primary_button" parent="TextAppearance.AppCompat.Widget.Button.Colored">
         <item name="colorAccent">@color/primary_blue</item>
         <item name="colorOnBackground">@color/primary_blue</item>
         <item name="android:textAlignment">textStart</item>
@@ -11,20 +11,15 @@
         <item name="android:layout_marginEnd">15dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:padding">15dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="fontFamily">@font/roboto</item>
     </style>
 
-    <style name="secondary_button" parent="TextAppearance.AppCompat">
+    <style name="secondary_button" parent="primary_button">
         <item name="colorAccent">@color/primary_white</item>
         <item name="colorOnBackground">@color/primary_white</item>
         <item name="android:textAlignment">textStart</item>
         <item name="backgroundTint">@color/primary_white</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:layout_marginBottom">15dp</item>
-        <item name="android:layout_marginStart">15dp</item>
-        <item name="android:layout_marginEnd">15dp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:padding">15dp</item>
-        <item name="android:textSize">16sp</item>
     </style>
 </resources>
