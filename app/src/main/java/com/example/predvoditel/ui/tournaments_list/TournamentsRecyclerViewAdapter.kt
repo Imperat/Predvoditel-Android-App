@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import api.Tournament
-import com.example.predvoditel.databinding.FragmentItemBinding
+import com.example.predvoditel.databinding.TournamentItemBinding
 
 class TournamentsRecyclerViewAdapter(private val values: List<Tournament>) : RecyclerView.Adapter<TournamentsRecyclerViewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            FragmentItemBinding.inflate(
+            TournamentItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false,
@@ -27,7 +27,7 @@ class TournamentsRecyclerViewAdapter(private val values: List<Tournament>) : Rec
         return values.size
     }
 
-    inner class ViewHolder(binding: FragmentItemBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: TournamentItemBinding): RecyclerView.ViewHolder(binding.root) {
         val contentView: TextView = binding.content
 
         override fun toString(): String {
