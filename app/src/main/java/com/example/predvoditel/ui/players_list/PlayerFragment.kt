@@ -20,7 +20,6 @@ import java.util.ArrayList
  * A fragment representing a list of Items.
  */
 class PlayerFragment : Fragment() {
-
     private var columnCount = 1
     private var playersRecyclerView: RecyclerView? = null;
     private var adapter: MyPlayerRecyclerViewAdapter? = null;

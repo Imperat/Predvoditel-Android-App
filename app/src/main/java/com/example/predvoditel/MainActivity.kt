@@ -2,10 +2,12 @@ package com.example.predvoditel
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.predvoditel.ui.tournaments_list.TournamentsFragment
 import com.example.predvoditel.ui.login.LoginFragment
 import com.example.predvoditel.ui.players_list.PlayerFragment
 
 private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,13 +17,15 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
 
         if (currentFragment == null) {
             val fragment = LoginFragment();
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment)
+                .commit()
         }
     }
 
     override fun onUserLoggedIn() {
         val fragment = MainMenu()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .commit()
     }
 
     override fun onStartGame() {
@@ -29,17 +33,21 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
     }
 
     override fun onShowAllTournaments() {
-        TODO("Not yet implemented")
+        val fragment = TournamentsFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .addToBackStack(null).commit()
     }
 
     override fun onShowPlayers() {
         val fragment = PlayerFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .addToBackStack(null).commit()
     }
 
     override fun onShowSettings() {
         val fragment = SettingsFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .addToBackStack(null).commit()
     }
 
     override fun onShowCrossTournamentStats() {
@@ -48,7 +56,8 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
 
     override fun onShowAbout() {
         val fragment = AboutFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .addToBackStack(null).commit()
     }
 
     override fun onShowFootballMessenger() {
@@ -57,6 +66,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
 
     override fun onLogout() {
         val fragment = LoginFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }
