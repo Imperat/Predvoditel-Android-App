@@ -10,12 +10,23 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.ArraySerializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.util.*
+import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 @Serializable
 data class UserLoginRequest(val username: String, val password: String)
+
+@Serializable
+data class Player(val _id: String, val name: String, val workspaceId: String, val createdBy: String, val createdAt: String)
+
+@Serializable
+class GetPlayersRequest()
+
+
 
 fun newWebClient(): WebClient {
     val channel = Channel<Channel<String>>();
@@ -62,6 +73,13 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         );
     }
 
+    private fun <T, U> getPrivateWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
+        val request = getPublicWsRequest(serializer, method, params);
+        request.auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODAzMjU3NzgsImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODAzMTg1Nzh9.ApyFfa6ZrQWGtMH17cpYaJemoPbS3M-s4ulYNbFgeDU"
+
+        return request;
+    }
+
     private fun handleWsResponse(result: String): Any {
         val responseIdHolder = Json {
             ignoreUnknownKeys = true
@@ -96,6 +114,23 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         internalChannel.send(Json.encodeToString(getPublicWsRequest(WebSocketResponseWrapper.serializer<UserResponse>(UserResponse.serializer()), "login", UserLoginRequest(username, password))));
         val strResponse = internalChannel.receive();
         val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
+        val logger = Logger.getLogger("RAAIM")
+        logger.info(response.toString())
+        return response.response.result;
+    }
+
+    suspend fun getPlayers(): List<Player> {
+        val internalChannel = Channel<String>();
+        channel.send(internalChannel);
+        internalChannel.send(Json.encodeToString(getPrivateWsRequest(
+            WebSocketResponseWrapper.serializer(ListSerializer(Player.serializer())),
+            "getPlayers",
+            GetPlayersRequest(),
+        )))
+
+        val strResponse = internalChannel.receive()
+        val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<kotlin.collections.List<Player>>
+
         return response.response.result;
     }
 

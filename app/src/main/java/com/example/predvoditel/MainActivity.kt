@@ -3,6 +3,7 @@ package com.example.predvoditel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.predvoditel.ui.login.LoginFragment
+import com.example.predvoditel.ui.players_list.PlayerFragment
 
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Callbacks {
@@ -32,7 +33,8 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
     }
 
     override fun onShowPlayers() {
-        TODO("Not yet implemented")
+        val fragment = PlayerFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
     }
 
     override fun onShowSettings() {
