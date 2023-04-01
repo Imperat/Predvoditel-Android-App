@@ -10,6 +10,7 @@ import com.example.predvoditel.data.Result
 import com.example.predvoditel.R
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 data class LoginFormState(
@@ -27,6 +28,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     val loginResult: LiveData<LoginResult> = _loginResult
 
     fun login(username: String, password: String) {
+        val logger = Logger.getLogger("RASIM")
+        logger.info("CLIIIIIIICKImperat")
         MainScope().launch {
             // can be launched in a separate asynchronous job
             val result = loginRepository.login(username, password)
@@ -53,7 +56,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
 
         _loginForm.value = LoginFormState(
-            isDataValid = usernameError != null || passwordError != null,
+            isDataValid = usernameError == null && passwordError == null,
             usernameError = usernameError,
             passwordError = passwordError
         )
