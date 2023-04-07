@@ -35,9 +35,13 @@ fun newWebClient(): WebClient {
     }
 }
 
-class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, (str: String) -> Any>, val channel: Channel<Channel<String>>) {
+class WebClient(
+    val idGenerator: () -> String,
+    val requests: MutableMap<String, (str: String) -> Any>,
+    val channel: Channel<Channel<String>>
+) {
     companion object {
-        private var instance : WebClient? = null
+        private var instance: WebClient? = null
         fun getInstance(): WebClient {
             if (instance == null) {
                 instance = newWebClient();
@@ -46,7 +50,12 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
             return instance!!;
         }
     }
-    fun <T, U> getPublicWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
+
+    fun <T, U> getPublicWsRequest(
+        serializer: KSerializer<U>,
+        method: String,
+        params: T
+    ): WebSocketRequest<T> {
         val id = idGenerator()
         requests[id] = {
             Json {
@@ -55,19 +64,24 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         }
 
         return WebSocketRequest(
-          auth = "",
-          body = WebSocketRequestBody(
-            type = "api",
-            method,
-            params,
-          ),
-          id,
+            auth = "",
+            body = WebSocketRequestBody(
+                type = "api",
+                method,
+                params,
+            ),
+            id,
         );
     }
 
-    fun <T, U> getPrivateWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
+    fun <T, U> getPrivateWsRequest(
+        serializer: KSerializer<U>,
+        method: String,
+        params: T
+    ): WebSocketRequest<T> {
         val request = getPublicWsRequest(serializer, method, params);
-        request.auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA4NDgxMjksImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODA4NDA5Mjl9.2XA9lwNfylJEmg2wvWoj12w_85Ll1VQePMKm4Ba_eVY";
+        request.auth =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA4NDgxMjksImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODA4NDA5Mjl9.2XA9lwNfylJEmg2wvWoj12w_85Ll1VQePMKm4Ba_eVY";
         return request;
     }
 
@@ -88,10 +102,10 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         install(WebSockets)
         engine {
             https {
-                trustManager = object: X509TrustManager {
-                    override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) { }
+                trustManager = object : X509TrustManager {
+                    override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {}
 
-                    override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) { }
+                    override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {}
 
                     override fun getAcceptedIssuers(): Array<X509Certificate>? = null
                 }
@@ -102,7 +116,15 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
     suspend fun login(username: String, password: String): UserResponse {
         val internalChannel = Channel<String>();
         channel.send(internalChannel);
-        internalChannel.send(Json.encodeToString(getPublicWsRequest(WebSocketResponseWrapper.serializer<UserResponse>(UserResponse.serializer()), "login", UserLoginRequest(username, password))));
+        internalChannel.send(
+            Json.encodeToString(
+                getPublicWsRequest(
+                    WebSocketResponseWrapper.serializer<UserResponse>(
+                        UserResponse.serializer()
+                    ), "login", UserLoginRequest(username, password)
+                )
+            )
+        );
         val strResponse = internalChannel.receive();
         val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
         val logger = Logger.getLogger("RAAIM")
@@ -111,8 +133,13 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
     }
 
     suspend fun init() {
-        client.webSocket(method = HttpMethod.Get, host = "predvoditel.com", port = 80, path = "/ws") {
-            while(true) {
+        client.webSocket(
+            method = HttpMethod.Get,
+            host = "predvoditel.com",
+            port = 80,
+            path = "/ws"
+        ) {
+            while (true) {
                 val internalChannel = channel.receive();
                 val request = internalChannel.receive();
                 send(request)
