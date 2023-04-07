@@ -8,6 +8,8 @@ import android.os.PersistableBundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import api.WebClient
+import api.newWebClient
 import com.example.predvoditel.ui.login.LoggedInUserView
 import com.example.predvoditel.ui.tournaments_list.TournamentsFragment
 import com.example.predvoditel.ui.login.LoginFragment
@@ -34,6 +36,12 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
         if (sharedPref != null) {
             mainViewModel.jwtToken = sharedPref.getString(JWT_INDEX, "")
             mainViewModel.refreshToken = sharedPref.getString(REFRESH_TOKEN_INDEX, "")
+            if (mainViewModel.jwtToken != null && mainViewModel.refreshToken != null) {
+                WebClient.getInstance().setTokens(
+                    mainViewModel.jwtToken!!,
+                    mainViewModel.refreshToken!!
+                );
+            }
         }
 
         super.onCreate(savedInstanceState)
@@ -45,7 +53,9 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
             return;
         }
 
-        val fragment = if (mainViewModel.jwtToken == null) LoginFragment() else MainMenu()
+        Log.i("TAAAAAAAA", mainViewModel.jwtToken + "-")
+
+        val fragment = if (mainViewModel.jwtToken == "") LoginFragment() else MainMenu()
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
     }
 
@@ -89,10 +99,16 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
     }
 
     override fun onLogout() {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            remove(JWT_INDEX)
+            remove(REFRESH_TOKEN_INDEX)
+            apply()
+        }
         moveFragment(LoginFragment())
     }
 
     private fun moveFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 }

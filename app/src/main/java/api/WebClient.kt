@@ -10,11 +10,8 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.ArraySerializer
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.util.*
-import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 @Serializable
@@ -40,6 +37,14 @@ class WebClient(
     val requests: MutableMap<String, (str: String) -> Any>,
     val channel: Channel<Channel<String>>
 ) {
+    lateinit var jwtToken: String;
+    lateinit var refreshToken: String;
+
+    fun setTokens(jwtToken: String, refreshToken: String) {
+        this.jwtToken = jwtToken;
+        this.refreshToken = refreshToken;
+    }
+
     companion object {
         private var instance: WebClient? = null
         fun getInstance(): WebClient {
@@ -80,8 +85,7 @@ class WebClient(
         params: T
     ): WebSocketRequest<T> {
         val request = getPublicWsRequest(serializer, method, params);
-        request.auth =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA4NDgxMjksImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODA4NDA5Mjl9.2XA9lwNfylJEmg2wvWoj12w_85Ll1VQePMKm4Ba_eVY";
+        request.auth = this.jwtToken;
         return request;
     }
 
@@ -127,8 +131,9 @@ class WebClient(
         );
         val strResponse = internalChannel.receive();
         val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
-        val logger = Logger.getLogger("RAAIM")
-        logger.info(response.toString())
+        this.jwtToken = response.response.result.token;
+        this.refreshToken = response.response.result.refreshToken;
+
         return response.response.result;
     }
 
