@@ -1,5 +1,6 @@
 package com.example.predvoditel
 
+import android.content.Context
 import android.nfc.Tag
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,6 +29,13 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
             mainViewModel.refreshToken = savedInstanceState.getString(REFRESH_TOKEN_INDEX)
         }
 
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+
+        if (sharedPref != null) {
+            mainViewModel.jwtToken = sharedPref.getString(JWT_INDEX, "")
+            mainViewModel.refreshToken = sharedPref.getString(REFRESH_TOKEN_INDEX, "")
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -41,15 +49,13 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(JWT_INDEX, mainViewModel.jwtToken)
-        outState.putString(REFRESH_TOKEN_INDEX, mainViewModel.refreshToken)
-    }
-
     override fun onUserLoggedIn(loggedInUserView: LoggedInUserView) {
-        mainViewModel.jwtToken = loggedInUserView.jwtToken
-        mainViewModel.refreshToken = loggedInUserView.refreshToken
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putString(JWT_INDEX, loggedInUserView.jwtToken)
+            putString(REFRESH_TOKEN_INDEX, loggedInUserView.refreshToken)
+            apply()
+        }
 
         moveFragment(MainMenu())
     }
