@@ -9,12 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import api.Player
+import api.PlayersClient
 import api.WebClient
 import com.example.predvoditel.R
-import com.example.predvoditel.ui.login.LoginResult
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 
 /**
  * A fragment representing a list of Items.
@@ -23,7 +22,7 @@ class PlayerFragment : Fragment() {
     private var columnCount = 1
     private var playersRecyclerView: RecyclerView? = null;
     private var adapter: MyPlayerRecyclerViewAdapter? = null;
-    private val webClient = WebClient.getInstance();
+    private val playersClient = PlayersClient(WebClient.getInstance());
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +54,7 @@ class PlayerFragment : Fragment() {
 
         MainScope().launch {
             // can be launched in a separate asynchronous job
-            val result = webClient.getPlayers();
+            val result = playersClient.getPlayers();
 
             updateUI(result.toList() as List<Player>)
         }

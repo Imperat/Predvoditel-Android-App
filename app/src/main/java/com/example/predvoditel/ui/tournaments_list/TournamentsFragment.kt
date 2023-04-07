@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import api.Tournament
+import api.TournamentsClient
 import api.WebClient
 import com.example.predvoditel.R
 import kotlinx.coroutines.MainScope
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 class TournamentsFragment : Fragment() {
     private var tournamentsRecyclerView: RecyclerView? = null
     private var adapter: TournamentsRecyclerViewAdapter? = null;
-    private var webClient = WebClient.getInstance();
+    private var tournamentsClient = TournamentsClient(WebClient.getInstance());
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +33,7 @@ class TournamentsFragment : Fragment() {
         updateUI(emptyList())
 
         MainScope().launch {
-            val result = webClient.getTournaments()
+            val result = tournamentsClient.getTournaments()
             updateUI(result.toList())
         }
 

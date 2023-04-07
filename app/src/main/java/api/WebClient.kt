@@ -20,20 +20,6 @@ import kotlin.concurrent.thread
 @Serializable
 data class UserLoginRequest(val username: String, val password: String)
 
-@Serializable
-data class Player(val _id: String, val name: String, val workspaceId: String, val createdBy: String, val createdAt: String)
-
-@Serializable
-data class Tournament(val _id: String, val name: String, val status: String)
-
-@Serializable
-class GetPlayersRequest()
-
-@Serializable
-class GetTournamentsRequest()
-
-
-
 fun newWebClient(): WebClient {
     val channel = Channel<Channel<String>>();
     return WebClient(
@@ -49,7 +35,7 @@ fun newWebClient(): WebClient {
     }
 }
 
-class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, (str: String) -> Any>, private val channel: Channel<Channel<String>>) {
+class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, (str: String) -> Any>, val channel: Channel<Channel<String>>) {
     companion object {
         private var instance : WebClient? = null
         fun getInstance(): WebClient {
@@ -60,7 +46,7 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
             return instance!!;
         }
     }
-    private fun <T, U> getPublicWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
+    fun <T, U> getPublicWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
         val id = idGenerator()
         requests[id] = {
             Json {
@@ -79,14 +65,13 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         );
     }
 
-    private fun <T, U> getPrivateWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
+    fun <T, U> getPrivateWsRequest(serializer: KSerializer<U>, method: String, params: T): WebSocketRequest<T> {
         val request = getPublicWsRequest(serializer, method, params);
-        request.auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODAzMzYwMDksImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODAzMzI0MDl9.vosddjgJSAZP2cA6BCeFraL3Y-mQ3cs5uxVQY8Qor4E"
-
+        request.auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA4NDgxMjksImRhdGEiOnsidXNlcklkIjoiNjExZmIwZmMwNjBkNjQzYzA4MzMzOGIwIiwidXNlcm5hbWUiOiJJbXBlcmF0Iiwid29ya3NwYWNlSWQiOiJzb2tvbCJ9LCJpYXQiOjE2ODA4NDA5Mjl9.2XA9lwNfylJEmg2wvWoj12w_85Ll1VQePMKm4Ba_eVY";
         return request;
     }
 
-    private fun handleWsResponse(result: String): Any {
+    fun handleWsResponse(result: String): Any {
         val responseIdHolder = Json {
             ignoreUnknownKeys = true
         }.decodeFromString(WebSocketResponseId.serializer(), result)
@@ -122,36 +107,6 @@ class WebClient(val idGenerator: () -> String, val requests: MutableMap<String, 
         val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
         val logger = Logger.getLogger("RAAIM")
         logger.info(response.toString())
-        return response.response.result;
-    }
-
-    suspend fun getPlayers(): List<Player> {
-        val internalChannel = Channel<String>();
-        channel.send(internalChannel);
-        internalChannel.send(Json.encodeToString(getPrivateWsRequest(
-            WebSocketResponseWrapper.serializer(ListSerializer(Player.serializer())),
-            "getPlayers",
-            GetPlayersRequest(),
-        )))
-
-        val strResponse = internalChannel.receive()
-        val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<kotlin.collections.List<Player>>
-
-        return response.response.result;
-    }
-
-    suspend fun getTournaments(): List<Tournament> {
-        val internalChannel = Channel<String>();
-        channel.send(internalChannel)
-        internalChannel.send(Json.encodeToString(getPrivateWsRequest(
-            WebSocketResponseWrapper.serializer(ListSerializer(Tournament.serializer())),
-            "listTournaments",
-            GetTournamentsRequest(),
-        )))
-
-        val strResponse = internalChannel.receive()
-        val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<kotlin.collections.List<Tournament>>
-
         return response.response.result;
     }
 
