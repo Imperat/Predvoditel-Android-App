@@ -19,6 +19,18 @@ data class LoginFormState(
     val isDataValid: Boolean = false
 )
 
+data class LoggedInUserView(
+    val displayName: String,
+    val jwtToken: String,
+    val refreshToken: String,
+    //... other data fields that may be accessible to the UI
+)
+
+data class LoginResult(
+    val success: LoggedInUserView? = null,
+    val error: Int? = null
+)
+
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
@@ -34,7 +46,13 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
             if (result is Result.Success) {
                 _loginResult.value =
-                    LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+                    LoginResult(
+                        success = LoggedInUserView(
+                            displayName = result.data.displayName,
+                            jwtToken = result.data.token,
+                            refreshToken = result.data.refreshToken
+                        )
+                    )
             } else {
                 _loginResult.value = LoginResult(error = R.string.login_failed)
             }

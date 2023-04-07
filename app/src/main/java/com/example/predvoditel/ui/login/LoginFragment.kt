@@ -12,9 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.predvoditel.databinding.FragmentLoginBinding
 
@@ -22,7 +19,7 @@ import com.example.predvoditel.R
 
 class LoginFragment : Fragment() {
     interface Callbacks {
-        fun onUserLoggedIn()
+        fun onUserLoggedIn(loggedInUserView: LoggedInUserView)
     }
 
     private var callbacks: Callbacks? = null
@@ -85,7 +82,7 @@ class LoginFragment : Fragment() {
                 }
                 loginResult.success?.let {
                     updateUiWithUser(it)
-                    callbacks?.onUserLoggedIn();
+                    callbacks?.onUserLoggedIn(it);
                 }
             })
 
@@ -113,8 +110,6 @@ class LoginFragment : Fragment() {
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
-
-                callbacks?.onUserLoggedIn()
             }
             false
         }
@@ -128,7 +123,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
+        val welcome = getString(R.string.welcome) + model.displayName;
         // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
