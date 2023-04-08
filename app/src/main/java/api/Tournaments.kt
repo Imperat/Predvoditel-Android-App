@@ -24,9 +24,9 @@ data class TournamentInfo(val _id: String, val name: String)
 
 @Serializable
 data class TournamentStats(
-    val tableViewQuery: TableViewQuery,
-    val goalMakers: GoalMakes,
-    val teamsResult: TeamsResult,
+    val tableViewQuery: List<TableViewQuery>,
+    val goalMakers: List<GoalMakes>,
+    val teamsResult: List<TeamsResult>,
 )
 
 @Serializable
@@ -38,26 +38,27 @@ class TableViewQuery {
     @Serializable
     class Team {
         lateinit var _id: String;
-        lateinit var goals: GoalInfo;
+        lateinit var goals: List<GoalInfo>;
 
         @Serializable
         class GoalInfo {
             lateinit var _id: String;
             lateinit var playerId: String;
-            lateinit var playerName: String;
+            var playerName: String? = null;
             lateinit var teamId: String;
-            lateinit var teamName: String;
+            lateinit var gameId: String;
+            var teamName: String? = null;
             lateinit var scoredAt: String;
-            var isSelfGoal by Delegates.notNull<Boolean>();
+            var isSelfGoal: Boolean? = null;
         }
     }
 }
 
 @Serializable
-class GoalMakes(val playerId: String, val playerName: String, val goalsCount: String)
+class GoalMakes(val playerId: String, val playerName: String, val goalsCount: Int, val _id: String)
 
 @Serializable
-class TeamsResult(val teamId: String, val players: List<PlayerInfo>, val teamColor: String)
+class TeamsResult(val teamId: String, val players: List<PlayerInfo>, val teamColor: String, val teamName: String)
 
 @Serializable
 class PlayerInfo(val _id: String, val name: String)
@@ -98,7 +99,11 @@ class TournamentsClient(webClient: WebClient) : TournamentsAPI, BaseAPI(webClien
     }
 
     override suspend fun getStats(tournamentId: String): TournamentStats {
-        TODO("Not yet implemented")
+        return sendPrivateRequest(
+            "getStats",
+            tournamentId,
+            TournamentStats.serializer()
+        )
     }
 
     override suspend fun getLastGameId(tournamentId: String): String {

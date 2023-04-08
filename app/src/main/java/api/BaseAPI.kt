@@ -1,5 +1,6 @@
 package api
 
+import android.util.Log
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
@@ -18,6 +19,7 @@ open class BaseAPI(val webClient: WebClient) {
         )))
 
         val strResponse = internalChannel.receive()
+        Log.i("KEFAL", strResponse)
         val response = webClient.handleWsResponse(strResponse) as WebSocketResponseWrapper<T>
 
         return response.response.result;

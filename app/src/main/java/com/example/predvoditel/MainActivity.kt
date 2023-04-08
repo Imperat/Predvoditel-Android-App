@@ -14,13 +14,16 @@ import com.example.predvoditel.ui.login.LoggedInUserView
 import com.example.predvoditel.ui.tournaments_list.TournamentsFragment
 import com.example.predvoditel.ui.login.LoginFragment
 import com.example.predvoditel.ui.players_list.PlayerFragment
+import com.example.predvoditel.ui.tournament_view.CompletedTournamentFragment
+import com.example.predvoditel.ui.tournaments_list.TournamentsRecyclerViewAdapter
 
 private const val TAG = "MainActivity"
 
 private const val JWT_INDEX = "jwt"
 private const val REFRESH_TOKEN_INDEX = "refreshToken"
 
-class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Callbacks {
+class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Callbacks,
+    TournamentsRecyclerViewAdapter.Callbacks {
     private val mainViewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
@@ -110,5 +113,9 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
 
     private fun moveFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+    }
+
+    override fun openTournament(tournamentId: String, tournamentStatus: String) {
+        moveFragment(CompletedTournamentFragment.newInstance(tournamentId));
     }
 }

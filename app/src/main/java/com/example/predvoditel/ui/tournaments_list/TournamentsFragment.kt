@@ -1,5 +1,6 @@
 package com.example.predvoditel.ui.tournaments_list
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import api.Tournament
 import api.TournamentsClient
 import api.WebClient
+import com.example.predvoditel.MainMenu
 import com.example.predvoditel.R
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -18,6 +20,7 @@ class TournamentsFragment : Fragment() {
     private var tournamentsRecyclerView: RecyclerView? = null
     private var adapter: TournamentsRecyclerViewAdapter? = null;
     private var tournamentsClient = TournamentsClient(WebClient.getInstance());
+    private lateinit var callbacks: TournamentsRecyclerViewAdapter.Callbacks;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +43,13 @@ class TournamentsFragment : Fragment() {
         return view;
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as TournamentsRecyclerViewAdapter.Callbacks
+    }
+
     private fun updateUI(tournaments: List<Tournament>) {
-        adapter = TournamentsRecyclerViewAdapter(tournaments)
+        adapter = TournamentsRecyclerViewAdapter(tournaments, callbacks)
         tournamentsRecyclerView?.adapter = adapter
     }
 }

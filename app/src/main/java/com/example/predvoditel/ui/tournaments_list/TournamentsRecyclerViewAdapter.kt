@@ -1,6 +1,5 @@
 package com.example.predvoditel.ui.tournaments_list
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,7 +9,14 @@ import api.Tournament
 import com.example.predvoditel.R
 import com.example.predvoditel.databinding.TournamentItemBinding
 
-class TournamentsRecyclerViewAdapter(private val values: List<Tournament>) : RecyclerView.Adapter<TournamentsRecyclerViewAdapter.ViewHolder>() {
+class TournamentsRecyclerViewAdapter(
+    private val values: List<Tournament>,
+    private val callbacks: Callbacks
+) : RecyclerView.Adapter<TournamentsRecyclerViewAdapter.ViewHolder>() {
+    interface Callbacks {
+        fun openTournament(tournamentId: String, tournamentStatus: String): Unit
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             TournamentItemBinding.inflate(
@@ -29,7 +35,11 @@ class TournamentsRecyclerViewAdapter(private val values: List<Tournament>) : Rec
             "started" -> R.drawable.live
             else -> R.drawable.planned
         }
+
         holder.iconView.setImageResource(icon)
+        holder.root.setOnClickListener {
+            callbacks.openTournament(item._id, item.status)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -39,6 +49,7 @@ class TournamentsRecyclerViewAdapter(private val values: List<Tournament>) : Rec
     inner class ViewHolder(binding: TournamentItemBinding): RecyclerView.ViewHolder(binding.root) {
         val contentView: TextView = binding.content
         val iconView: ImageView = binding.imageButton
+        val root = binding.root;
 
         override fun toString(): String {
             return super.toString() + " '" + contentView.text + "'"
