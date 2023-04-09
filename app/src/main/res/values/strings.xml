@@ -33,6 +33,8 @@
     <string name="startTheGame">Начать игру</string>
     <string name="players">Игроки</string>
     <string name="aboutPredvoditel">О программе</string>
+    <string name="authorName">Автор: Лелякин Михаил Александрович</string>
+    <string name="aboutPredvoditelDescription">Футбольный предводитель возьмёт на себя ваши заботы по подсчёту статистики различных футбольных турниров! Просто заполните составы и начните играть!</string>
     <string name="logOut">Разлогиниться</string>
     <string name="footballMessenger">Футбольный мессенджер</string>
 </resources>

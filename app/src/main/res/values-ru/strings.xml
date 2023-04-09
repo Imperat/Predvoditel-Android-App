@@ -13,4 +13,5 @@
     <string name="allTournaments">Посмотреть все турниры</string>
     <string name="players">Игроки</string>
     <string name="aboutPredvoditel">О программе</string>
+    <string name="aboutPredvoditelDescription">Футбольный предводитель возьмёт на себя ваши заботы по подсчёту статистики различных футбольных турниров! Просто заполните составы и начните играть!</string>
 </resources>
