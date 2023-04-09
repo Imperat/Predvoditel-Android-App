@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import api.*
 import com.example.predvoditel.R
@@ -43,11 +41,13 @@ class CompletedTournamentFragment : Fragment() {
     }
 
     fun updateUI(stats: TournamentStats) {
-        val demoCollectionPagerAdapter = DemoCollectionPagerAdapter(childFragmentManager, stats, listOf(
-            getString(R.string.tournamentTable),
-            getString(R.string.bombardiers),
-            getString(R.string.completedGames),
-        ))
+        val demoCollectionPagerAdapter = CompletedTournamentPagerAdapter(
+            childFragmentManager, stats, listOf(
+                getString(R.string.tournamentTable),
+                getString(R.string.bombardiers),
+                getString(R.string.completedGames),
+            )
+        )
 
         val viewPager = view?.findViewById<ViewPager>(R.id.completed_stats_view_pager)
         viewPager?.adapter = demoCollectionPagerAdapter
@@ -66,49 +66,12 @@ class CompletedTournamentFragment : Fragment() {
     }
 }
 
-private const val TOURNAMENT_STATS = "TOURNAMENT_STATS";
-
-class GoalMakersFragment: Fragment() {
-    private lateinit var tournamentStats: TournamentStats
-    private var bombardiersRecyclerView: RecyclerView? = null;
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            tournamentStats = it.getParcelable(TOURNAMENT_STATS)!!
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_completed_tournament_goal_makers, container, false)
-        bombardiersRecyclerView = view.findViewById(R.id.bombardiersStats);
-
-        if (bombardiersRecyclerView != null) {
-            bombardiersRecyclerView!!.layoutManager = LinearLayoutManager(context)
-            bombardiersRecyclerView?.adapter = BombardiersRecyclerViewAdapter(tournamentStats.goalMakers)
-        }
-
-        return view;
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(tournamentStats: TournamentStats) =
-            GoalMakersFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(TOURNAMENT_STATS, tournamentStats)
-                }
-            }
-    }
-}
-
-class DemoCollectionPagerAdapter(fm: FragmentManager, val stats: TournamentStats, val tabNames: List<CharSequence>) : FragmentPagerAdapter(fm) {
-    override fun getCount(): Int  = 3
+class CompletedTournamentPagerAdapter(
+    fm: FragmentManager,
+    val stats: TournamentStats,
+    val tabNames: List<CharSequence>
+) : FragmentPagerAdapter(fm) {
+    override fun getCount(): Int = 3
 
     override fun getItem(i: Int): Fragment {
         val fragment = GoalMakersFragment.newInstance(stats)
