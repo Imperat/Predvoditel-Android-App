@@ -12,17 +12,41 @@ open class BaseAPI(val webClient: WebClient) {
     suspend inline fun <T, reified U> sendPrivateRequest(methodName: String, request: U, responseSerializer: KSerializer<T>): T {
         val internalChannel = Channel<String>();
         webClient.channel.send(internalChannel);
-        internalChannel.send(Json.encodeToString(webClient.getPrivateWsRequest(
+        val webSocketRequest = webClient.getPrivateWsRequest(
             WebSocketResponseWrapper.serializer(responseSerializer),
             methodName,
             request,
-        )))
+        )
+
+        internalChannel.send(Json.encodeToString(webSocketRequest))
 
         val strResponse = internalChannel.receive()
-        Log.i("KEFAL", strResponse)
-        val response = webClient.handleWsResponse(strResponse) as WebSocketResponseWrapper<T>
+        try {
+            val response = webClient.handleWsResponse(strResponse) as WebSocketResponseWrapper<T>
 
-        return response.response.result;
+            if (response.response.result != null) {
+                return response.response.result;
+            }
+
+            throw Error("API ERROR")
+        } catch (e: OldTokensError) {
+            val webSocketRequest = webClient.getPrivateWsRequest(
+                WebSocketResponseWrapper.serializer(responseSerializer),
+                methodName,
+                request,
+            )
+
+            internalChannel.send(Json.encodeToString(webSocketRequest))
+
+            val strResponse = internalChannel.receive()
+            val response = webClient.handleWsResponse(strResponse) as WebSocketResponseWrapper<T>
+
+            if (response.response.result != null) {
+                return response.response.result;
+            }
+
+            throw Error("API ERROR")
+        }
     }
 
     suspend fun <T, U> sendPublicRequest(methodName: String, request: U, responseSerializer: KSerializer<T>): T {
@@ -37,6 +61,10 @@ open class BaseAPI(val webClient: WebClient) {
         val strResponse = internalChannel.receive()
         val response = webClient.handleWsResponse(strResponse) as WebSocketResponseWrapper<T>
 
-        return response.response.result;
+        if (response.response.result != null) {
+            return response.response.result;
+        }
+
+        throw Error("API ERROR")
     }
 }

@@ -21,6 +21,7 @@ private const val TAG = "MainActivity"
 
 private const val JWT_INDEX = "jwt"
 private const val REFRESH_TOKEN_INDEX = "refreshToken"
+private const val USER_ID = "userId"
 
 class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Callbacks,
     TournamentsRecyclerViewAdapter.Callbacks {
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
         if (savedInstanceState != null) {
             mainViewModel.jwtToken = savedInstanceState.getString(JWT_INDEX)
             mainViewModel.refreshToken = savedInstanceState.getString(REFRESH_TOKEN_INDEX)
+            mainViewModel.userId = savedInstanceState.getString(USER_ID)
         }
 
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
@@ -39,11 +41,22 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
         if (sharedPref != null) {
             mainViewModel.jwtToken = sharedPref.getString(JWT_INDEX, "")
             mainViewModel.refreshToken = sharedPref.getString(REFRESH_TOKEN_INDEX, "")
-            if (mainViewModel.jwtToken != null && mainViewModel.refreshToken != null) {
+            mainViewModel.userId = sharedPref.getString(USER_ID, "")
+            if (mainViewModel.jwtToken != null && mainViewModel.refreshToken != null && mainViewModel.userId != null) {
                 WebClient.getInstance().setTokens(
                     mainViewModel.jwtToken!!,
-                    mainViewModel.refreshToken!!
-                );
+                    mainViewModel.refreshToken!!,
+                    mainViewModel.userId!!,
+                )
+
+                WebClient.getInstance().onSetTokensCallback = fun (jwtToken: String, refreshToken: String, userId: String) {
+                    with (sharedPref.edit()) {
+                        putString(JWT_INDEX, jwtToken)
+                        putString(REFRESH_TOKEN_INDEX, refreshToken)
+                        putString(USER_ID, userId)
+                        apply()
+                    }
+                }
             }
         }
 
@@ -67,6 +80,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.Callbacks, MainMenu.Call
         with (sharedPref.edit()) {
             putString(JWT_INDEX, loggedInUserView.jwtToken)
             putString(REFRESH_TOKEN_INDEX, loggedInUserView.refreshToken)
+            putString(USER_ID, loggedInUserView.userId)
             apply()
         }
 

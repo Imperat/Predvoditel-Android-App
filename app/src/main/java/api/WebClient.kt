@@ -1,5 +1,6 @@
 package api
 
+import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import java.security.cert.X509Certificate
@@ -16,6 +17,11 @@ import kotlin.concurrent.thread
 
 @Serializable
 data class UserLoginRequest(val username: String, val password: String)
+
+@Serializable
+data class LoginByRefreshTokenRequest(val userId: String, val refreshToken: String)
+
+class OldTokensError : Error();
 
 fun newWebClient(): WebClient {
     val channel = Channel<Channel<String>>();
@@ -34,15 +40,19 @@ fun newWebClient(): WebClient {
 
 class WebClient(
     val idGenerator: () -> String,
-    val requests: MutableMap<String, (str: String) -> Any>,
+    val requests: MutableMap<String, (str: String) -> WebSocketResponseWrapper<Any>>,
     val channel: Channel<Channel<String>>
 ) {
     lateinit var jwtToken: String;
     lateinit var refreshToken: String;
+    lateinit var userId: String;
+    var onSetTokensCallback: ((String, String, String) -> Unit)? = null;
 
-    fun setTokens(jwtToken: String, refreshToken: String) {
+    fun setTokens(jwtToken: String, refreshToken: String, userId: String) {
         this.jwtToken = jwtToken;
         this.refreshToken = refreshToken;
+        this.userId = userId;
+        onSetTokensCallback?.let { it(jwtToken, refreshToken, userId) }
     }
 
     companion object {
@@ -65,7 +75,7 @@ class WebClient(
         requests[id] = {
             Json {
                 ignoreUnknownKeys
-            }.decodeFromString(serializer, it) as Any;
+            }.decodeFromString(serializer, it) as WebSocketResponseWrapper<Any>;
         }
 
         return WebSocketRequest(
@@ -89,7 +99,7 @@ class WebClient(
         return request;
     }
 
-    fun handleWsResponse(result: String): Any {
+    suspend fun handleWsResponse(result: String): WebSocketResponseWrapper<Any> {
         val responseIdHolder = Json {
             ignoreUnknownKeys = true
         }.decodeFromString(WebSocketResponseId.serializer(), result)
@@ -98,8 +108,24 @@ class WebClient(
             ?: throw java.lang.Exception("There is not handler for the message");
 
         requests.remove(responseIdHolder.id);
-        return parser(result);
+        val parsedResult = parser(result);
 
+        if (parsedResult.response.error != null) {
+            if (parsedResult.response.error.message != "jwt expired") {
+                throw Error("API ERROR")
+            }
+
+            val loginByRefreshTokenResult = loginByRefreshToken(userId, refreshToken)
+            setTokens(
+                loginByRefreshTokenResult.token,
+                loginByRefreshTokenResult.refreshToken,
+                loginByRefreshTokenResult.user._id
+            )
+
+            throw OldTokensError();
+        }
+
+        return parsedResult;
     }
 
     private val client = HttpClient(CIO) {
@@ -131,6 +157,34 @@ class WebClient(
         );
         val strResponse = internalChannel.receive();
         val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
+        if (response.response.result == null) {
+            throw Error("Not Result")
+        }
+
+        this.jwtToken = response.response.result.token;
+        this.refreshToken = response.response.result.refreshToken;
+
+        return response.response.result;
+    }
+
+    suspend fun loginByRefreshToken(userId: String, refreshToken: String): UserResponse {
+        val internalChannel = Channel<String>();
+        channel.send(internalChannel);
+        internalChannel.send(
+            Json.encodeToString(
+                getPublicWsRequest(
+                    WebSocketResponseWrapper.serializer(
+                        UserResponse.serializer()
+                    ), "loginByRefreshToken", LoginByRefreshTokenRequest(userId, refreshToken)
+                )
+            )
+        );
+        val strResponse = internalChannel.receive();
+        val response = handleWsResponse(strResponse) as WebSocketResponseWrapper<UserResponse>;
+        if (response.response.result == null) {
+            throw Error("Not Result")
+        }
+
         this.jwtToken = response.response.result.token;
         this.refreshToken = response.response.result.refreshToken;
 
@@ -147,11 +201,13 @@ class WebClient(
             while (true) {
                 val internalChannel = channel.receive();
                 val request = internalChannel.receive();
+                Log.i("API ->", request)
                 send(request)
                 val othersMessage = incoming.receive() as? Frame.Text
                 val str = othersMessage?.readText()
 
                 if (str != null) {
+                    Log.i("API <- ", str)
                     internalChannel.send((str));
                 }
             }

@@ -23,6 +23,7 @@ data class LoggedInUserView(
     val displayName: String,
     val jwtToken: String,
     val refreshToken: String,
+    val userId: String,
     //... other data fields that may be accessible to the UI
 )
 
@@ -50,7 +51,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                         success = LoggedInUserView(
                             displayName = result.data.displayName,
                             jwtToken = result.data.token,
-                            refreshToken = result.data.refreshToken
+                            refreshToken = result.data.refreshToken,
+                            userId = result.data.userId,
                         )
                     )
             } else {
