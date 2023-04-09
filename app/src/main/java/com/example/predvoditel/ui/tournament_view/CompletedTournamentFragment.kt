@@ -1,5 +1,6 @@
 package com.example.predvoditel.ui.tournament_view
 
+import GoalMakersFragment
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -74,8 +75,11 @@ class CompletedTournamentPagerAdapter(
     override fun getCount(): Int = 3
 
     override fun getItem(i: Int): Fragment {
-        val fragment = GoalMakersFragment.newInstance(stats)
-        return fragment
+        return when (i) {
+            0 -> TableViewQueryFragment.newInstance(stats)
+            1 -> GoalMakersFragment.newInstance(stats)
+            else -> GoalMakersFragment.newInstance(stats)
+        }
     }
 
     override fun getPageTitle(position: Int): CharSequence {

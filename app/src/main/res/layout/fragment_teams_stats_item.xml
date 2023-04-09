@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/textlines"
+    android:orientation="horizontal"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/teamName"
+        android:layout_width="200dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_height="match_parent"
+        android:paddingLeft="15dp"
+        android:text="Синяя Команда"
+        android:gravity="center_vertical"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/gamesNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="10" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/gamesWin"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="6" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/gamesDraw"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="1" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/gamesLose"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="4" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/goalsScored"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="23" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/goalsMissed"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="33" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/goalsDifference"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="-10" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/points"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingRight="15dp"
+        android:gravity="center_vertical"
+        android:text="17" />
+</LinearLayout>
