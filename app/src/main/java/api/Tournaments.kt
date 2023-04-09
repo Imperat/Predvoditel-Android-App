@@ -1,5 +1,7 @@
 package api
 
+import android.os.Parcel
+import android.os.Parcelable
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -27,7 +29,42 @@ data class TournamentStats(
     val tableViewQuery: List<TableViewQuery>,
     val goalMakers: List<GoalMakes>,
     val teamsResult: List<TeamsResult>,
-)
+) : Parcelable {
+    constructor(source: Parcel) : this(
+        ArrayList<TableViewQuery>().apply {
+            source.readList(
+                this,
+                TableViewQuery::class.java.classLoader
+            )
+        },
+        ArrayList<GoalMakes>().apply { source.readList(this, GoalMakes::class.java.classLoader) },
+        ArrayList<TeamsResult>().apply {
+            source.readList(
+                this,
+                TeamsResult::class.java.classLoader
+            )
+        }
+    )
+
+    override fun describeContents() = 0
+
+    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
+        writeList(tableViewQuery)
+        writeList(goalMakers)
+        writeList(teamsResult)
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Parcelable.Creator<TournamentStats> =
+            object : Parcelable.Creator<TournamentStats> {
+                override fun createFromParcel(source: Parcel): TournamentStats =
+                    TournamentStats(source)
+
+                override fun newArray(size: Int): Array<TournamentStats?> = arrayOfNulls(size)
+            }
+    }
+}
 
 @Serializable
 class TableViewQuery {
