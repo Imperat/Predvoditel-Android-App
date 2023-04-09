@@ -37,4 +37,7 @@
     <string name="aboutPredvoditelDescription">Футбольный предводитель возьмёт на себя ваши заботы по подсчёту статистики различных футбольных турниров! Просто заполните составы и начните играть!</string>
     <string name="logOut">Разлогиниться</string>
     <string name="footballMessenger">Футбольный мессенджер</string>
+    <string name="tournamentTable">Турнирная таблица</string>
+    <string name="bombardiers">Бомбардиры</string>
+    <string name="completedGames">Завершённые игры</string>
 </resources>

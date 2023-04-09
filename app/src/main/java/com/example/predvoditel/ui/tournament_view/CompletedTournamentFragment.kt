@@ -10,9 +10,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import api.*
 import com.example.predvoditel.R
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -35,7 +35,6 @@ class CompletedTournamentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_completed_tournament, container, false)
-
         MainScope().launch {
             val stats = tournamentsClient.getStats(tournamentId!!)
             updateUI(stats)
@@ -44,9 +43,16 @@ class CompletedTournamentFragment : Fragment() {
     }
 
     fun updateUI(stats: TournamentStats) {
-        val demoCollectionPagerAdapter = DemoCollectionPagerAdapter(childFragmentManager, stats)
+        val demoCollectionPagerAdapter = DemoCollectionPagerAdapter(childFragmentManager, stats, listOf(
+            getString(R.string.tournamentTable),
+            getString(R.string.bombardiers),
+            getString(R.string.completedGames),
+        ))
+
         val viewPager = view?.findViewById<ViewPager>(R.id.completed_stats_view_pager)
         viewPager?.adapter = demoCollectionPagerAdapter
+        val tabLayout = view?.findViewById<TabLayout>(R.id.tab_layout)
+        tabLayout?.setupWithViewPager(viewPager)
     }
 
     companion object {
@@ -101,7 +107,7 @@ class GoalMakersFragment: Fragment() {
     }
 }
 
-class DemoCollectionPagerAdapter(fm: FragmentManager, val stats: TournamentStats) : FragmentPagerAdapter(fm) {
+class DemoCollectionPagerAdapter(fm: FragmentManager, val stats: TournamentStats, val tabNames: List<CharSequence>) : FragmentPagerAdapter(fm) {
     override fun getCount(): Int  = 3
 
     override fun getItem(i: Int): Fragment {
@@ -110,6 +116,6 @@ class DemoCollectionPagerAdapter(fm: FragmentManager, val stats: TournamentStats
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return "OBJECT ${(position + 1)}"
+        return tabNames[position]
     }
 }
